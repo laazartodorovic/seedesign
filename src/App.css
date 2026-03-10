@@ -25,6 +25,15 @@
   margin: 0;
 }
 
+.app__error {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #fee;
+  color: #c00;
+  border: 1px solid #c00;
+  font-size: 0.9rem;
+}
+
 .app__main {
   width: 100%;
   max-width: 720px;
@@ -45,6 +54,7 @@
   background: #fff;
   cursor: pointer;
   transition: background 0.2s;
+  position: relative;
 }
 
 .drop-zone:hover:not(.drop-zone--disabled) {
@@ -57,7 +67,12 @@
 }
 
 .drop-zone__input {
-  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .drop-zone span {

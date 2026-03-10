@@ -88,7 +88,10 @@ function sobel(grayscale, width, height) {
  * Non-maximum suppression + hysteresis threshold (Canny-like)
  */
 function cannyThreshold(magnitude, width, height, lowRatio, highRatio) {
-  const maxVal = Math.max(...magnitude);
+  let maxVal = 0;
+  for (let i = 0; i < magnitude.length; i++) {
+    if (magnitude[i] > maxVal) maxVal = magnitude[i];
+  }
   const low = lowRatio * maxVal;
   const high = highRatio * maxVal;
   const strong = 255;

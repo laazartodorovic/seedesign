@@ -10,12 +10,16 @@ function App() {
   const [sourceImage, setSourceImage] = useState(null);
   const [selectedStyle, setSelectedStyle] = useState('pure');
   const [processedCanvas, setProcessedCanvas] = useState(null);
+  const [error, setError] = useState(null);
 
   const sourceCanvas = useMemo(() => {
     if (!sourceImage) return null;
+    const w = sourceImage.naturalWidth;
+    const h = sourceImage.naturalHeight;
+    if (!w || !h) return null;
     const c = document.createElement('canvas');
-    c.width = sourceImage.naturalWidth;
-    c.height = sourceImage.naturalHeight;
+    c.width = w;
+    c.height = h;
     const ctx = c.getContext('2d');
     ctx.drawImage(sourceImage, 0, 0);
     return c;
@@ -26,8 +30,14 @@ function App() {
       setProcessedCanvas(null);
       return;
     }
-    const result = processToSketch(sourceCanvas, selectedStyle);
-    setProcessedCanvas(result);
+    setError(null);
+    try {
+      const result = processToSketch(sourceCanvas, selectedStyle);
+      setProcessedCanvas(result);
+    } catch (err) {
+      setError(err?.message || 'Processing failed');
+      setProcessedCanvas(null);
+    }
   }, [sourceCanvas, selectedStyle]);
 
   const isLoading = sourceCanvas && !processedCanvas;
@@ -40,8 +50,17 @@ function App() {
       </header>
 
       <main className="app__main">
+        {error && (
+          <div className="app__error" role="alert">
+            {error}
+          </div>
+        )}
         {!sourceImage ? (
-          <DropZone onImageLoad={setSourceImage} disabled={false} />
+          <DropZone
+            onImageLoad={(img) => { setError(null); setSourceImage(img); }}
+            onError={setError}
+            disabled={false}
+          />
         ) : (
           <>
             <div className="app__toolbar">
